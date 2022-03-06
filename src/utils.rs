@@ -1,23 +1,28 @@
-pub mod structures {
-    use std::time::{Duration, Instant};
-    pub const COOLDOWN_TIME: Duration = Duration::new(5, 0); 
+pub mod ops {
 
-    pub struct Entry {
-        path: String,
-        timestamp: Instant
-    }
-
-    impl Entry {
-        pub fn new(path: String) -> Self {
-            Entry {
-                path,
-                timestamp: Instant::now()
+    /// Decides if the path is safe to attach events to.
+    pub fn filter(path: &String) -> bool {
+        let blacklist = vec![
+            "/proc",
+            "/sys",
+            "/dev",
+            "/etc",
+            // "/tmp",
+            "/run",
+            "/var",
+            "/lib",
+            "/bin",
+            "/sbin",
+            "/usr",
+            "/opt",
+            "/boot",
+            // "/root",
+        ];
+        for item in blacklist {
+            if path.starts_with(item) {
+                return false;
             }
         }
-
-        pub fn dead(&self) -> bool {
-            self.timestamp.elapsed() > COOLDOWN_TIME
-        }
+        true
     }
-
 }
